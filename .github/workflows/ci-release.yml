@@ -33,19 +33,20 @@ jobs:
           if [ -f "${GVM_VERSION_FNAME}" ]
           then
             GVM_VERSION=$(cat ${GVM_VERSION_FNAME})
+            GVM_DATE=$(echo ${GVM_VERSION} | cut -d. -f1-2)
+            GVM_SERIAL=$(echo ${GVM_VERSION} | cut -d. -f3)
+            NOW_DATE=$(date +%Y.%m)
+            NOW_SERIAL=0
+            if [ "${GVM_DATE}" == "${NOW_DATE}" ]
+            then
+              NOW_SERIAL=$(expr ${GVM_SERIAL} + 1)
+            fi
+            GVM_VERSION="${NOW_DATE}.${NOW_SERIAL}"
           else
             GVM_VERSION="$(date +%Y.%m).0"
             echo "GVM_BOOTSTRAP=1" >> ${GITHUB_ENV}
           fi
-          GVM_DATE=$(echo ${GVM_VERSION} | cut -d. -f1-2)
-          GVM_SERIAL=$(echo ${GVM_VERSION} | cut -d. -f3)
-          NOW_DATE=$(date +%Y.%m)
-          NOW_SERIAL=0
-          if [ "${GVM_DATE}" == "${NOW_DATE}" ]
-          then
-            NOW_SERIAL=$(expr ${GVM_SERIAL} + 1)
-          fi
-          echo "GVM_VERSION=${NOW_DATE}.${NOW_SERIAL}" >> ${GITHUB_ENV}
+          echo "GVM_VERSION=${GVM_VERSION}" >> ${GITHUB_ENV}
 
       - name: "store release version"
         run: |
@@ -56,7 +57,7 @@ jobs:
           fi
           git config user.name "GitHub Actions"
           git config user.email "actions@users.noreply.github.com"
-          git commit -am "Automated release for verison \"${GVM_VERSION}\""
+          git commit -am "Automated release for version \"${GVM_VERSION}\""
           git push  
 
       - name: "perform release"
