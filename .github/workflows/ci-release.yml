@@ -58,7 +58,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@users.noreply.github.com"
           git commit -am "Automated release for version \"${GVM_VERSION}\""
-          git push  
+          git push
 
       - name: "perform release"
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
